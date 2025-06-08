@@ -1,6 +1,243 @@
 <!DOCTYPE html>
 <html lang="ru">
 <head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Меню Shoha</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background: linear-gradient(to right, #fdfcfb, #e2d1c3);
+      margin: 0;
+      padding: 20px;
+    }
+    h1 {
+      text-align: center;
+      color: #2e2e2e;
+      margin-bottom: 30px;
+    }
+    .menu-section {
+      max-width: 900px;
+      margin: auto;
+      display: flex;
+      flex-direction: column;
+      gap: 40px;
+    }
+    .category {
+      background: #ffffff;
+      border-radius: 15px;
+      box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+      padding: 20px 25px;
+    }
+    .category h2 {
+      border-left: 6px solid #ff6347;
+      padding-left: 10px;
+      color: #333;
+    }
+    .item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-top: 15px;
+      padding-bottom: 10px;
+      border-bottom: 1px dashed #ddd;
+    }
+    .item-name {
+      font-size: 18px;
+      color: #222;
+    }
+    .price {
+      color: #888;
+    }
+    button {
+      padding: 8px 14px;
+      background: #ff6347;
+      color: white;
+      border: none;
+      border-radius: 10px;
+      cursor: pointer;
+      transition: background 0.3s ease;
+    }
+    button:hover {
+      background: #e5533c;
+    }
+    #cart-button {
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      background: #222;
+      color: white;
+      border-radius: 50%;
+      width: 60px;
+      height: 60px;
+      font-size: 24px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+    }
+    #cart-count {
+      position: absolute;
+      top: -8px;
+      right: -8px;
+      background: red;
+      color: white;
+      font-size: 14px;
+      padding: 2px 6px;
+      border-radius: 50%;
+    }
+</style>
+</head>
+<body>
+  <h1>🍽 Меню Shoha</h1>
+  <div class="menu-section">
+    <div class="category">
+      <h2>🥙 Шаурма</h2>
+      <div class="item">
+        <span class="item-name">Классическая шаурма</span>
+        <span class="price">30 000</span>
+        <button onclick="addToCart('Классическая шаурма', 30000)">Добавить</button>
+      </div>
+      <div class="item">
+        <span class="item-name">Шаурма с сыром</span>
+        <span class="price">35 000</span>
+        <button onclick="addToCart('Шаурма с сыром', 35000)">Добавить</button>
+      </div>
+    </div>
+
+    <div class="category">
+      <h2>🌭 Хот-доги</h2>
+      <div class="item">
+        <span class="item-name">Хот-дог стандарт</span>
+        <span class="price">20 000</span>
+        <button onclick="addToCart('Хот-дог стандарт', 20000)">Добавить</button>
+      </div>
+      <div class="item">
+        <span class="item-name">Хот-дог XXL</span>
+        <span class="price">25 000</span>
+        <button onclick="addToCart('Хот-дог XXL', 25000)">Добавить</button>
+      </div>
+    </div>
+
+    <div class="category">
+      <h2>🥤 Напитки</h2>
+      <div class="item">
+        <span class="item-name">Пепси 0.5л</span>
+        <span class="price">8 000</span>
+        <button onclick="addToCart('Пепси 0.5л', 8000)">Добавить</button>
+      </div>
+      <div class="item">
+        <span class="item-name">Кола 1л</span>
+        <span class="price">12 000</span>
+        <button onclick="addToCart('Кола 1л', 12000)">Добавить</button>
+      </div>
+    </div>
+  </div>
+
+  <button id="cart-button" onclick="toggleCart()">🛒<span id="cart-count">0</span></button>
+
+  <div id="cart-popup">
+    <h3>🛍 Ваша корзина</h3>
+    <div id="cart-items"></div>
+    <strong>Итого: <span id="total-price">0</span> UZS</strong><br><br>
+    <button onclick="placeOrder()">Оформить заказ</button>
+  </div>
+
+  <script>
+    let cart = [];
+
+    function addToCart(name, price) {
+      const existing = cart.find(item => item.name === name);
+      if (existing) {
+        existing.quantity += 1;
+      } else {
+        cart.push({ name, price, quantity: 1 });
+      }
+      updateCartUI();
+    }
+
+    function removeItem(index) {
+      cart.splice(index, 1);
+      updateCartUI();
+    }
+
+    function changeQuantity(index, delta) {
+      cart[index].quantity += delta;
+      if (cart[index].quantity <= 0) {
+        removeItem(index);
+      } else {
+        updateCartUI();
+      }
+    }
+
+    function updateCartUI() {
+      const cartItems = document.getElementById('cart-items');
+      const totalPrice = document.getElementById('total-price');
+      const cartCount = document.getElementById('cart-count');
+      cartItems.innerHTML = '';
+      let total = 0;
+      let count = 0;
+
+      cart.forEach((item, index) => {
+        const line = document.createElement('div');
+        line.innerHTML = `
+          ${item.name} — ${item.price.toLocaleString()} UZS × ${item.quantity}
+          <button onclick="changeQuantity(${index}, -1)">➖</button>
+          <button onclick="changeQuantity(${index}, 1)">➕</button>
+          <button class="remove-btn" onclick="removeItem(${index})">удалить</button>`;
+        cartItems.appendChild(line);
+        total += item.price * item.quantity;
+        count += item.quantity;
+      });
+
+      totalPrice.textContent = total.toLocaleString();
+      cartCount.textContent = count;
+    }
+
+    function toggleCart() {
+      const popup = document.getElementById('cart-popup');
+      popup.style.display = popup.style.display === 'block' ? 'none' : 'block';
+    }
+
+    function placeOrder() {
+      if (cart.length === 0) {
+        alert("Корзина пуста!");
+        return;
+      }
+
+      const orderText = cart.map(item =>
+        `${item.name} ×${item.quantity} (${(item.price * item.quantity).toLocaleString()} UZS)`
+      ).join("\n");
+
+      const total = cart.reduce((sum, item) => sum + item.price * item.quantity, 0);
+      const message = `🧾 Новый заказ (Shoha Menu):\n${orderText}\n💵 Сумма: ${total.toLocaleString()} UZS`;
+
+      fetch("https://api.telegram.org/bot7745830810:AAHuwIeNelT9z5U88AORGGj-jdXEy_hcFhc/sendMessage", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          chat_id: "-1002839289450",
+          text: message
+        })
+      })
+      .then(res => res.json())
+      .then(data => {
+        if (data.ok) {
+          cart = [];
+          updateCartUI();
+          window.location.href = "thankyou.html";
+        } else {
+          alert("❌ Ошибка Telegram: " + data.description);
+        }
+      })
+      .catch(err => alert("❌ Ошибка подключения: " + err));
+    }
+  </script>
+</body>
+</html>
+<!DOCTYPE html>
+<html lang="ru">
+<head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Меню Shoha</title>
@@ -256,5 +493,21 @@
 
     renderMenu();
   </script>
+</body>
+</html>
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <title>Спасибо за заказ!</title>
+  <style>
+    body { font-family: sans-serif; background:#f0fff0; text-align:center; padding:50px; }
+    h1 { color: #2e8b57; font-size:28px; }
+    p { font-size:18px; margin-top:20px; }
+  </style>
+</head>
+<body>
+  <h1>🎉 Спасибо за заказ!</h1>
+  <p>Наши сотрудники уже занимаются обработкой.<br>Ожидайте, пожалуйста!</p>
 </body>
 </html>
