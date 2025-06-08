@@ -70,6 +70,19 @@
       margin-bottom: 5px;
     }
 
+    .counter {
+      font-size: 14px;
+      margin-top: 5px;
+      color: #333;
+    }
+
+    .item-controls {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 5px;
+    }
+
     button {
       padding: 6px 12px;
       background: #f44336;
@@ -93,6 +106,17 @@
       align-items: center;
       justify-content: center;
       box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+    }
+
+    #cart-button span {
+      position: absolute;
+      top: 6px;
+      right: 6px;
+      background: red;
+      color: white;
+      font-size: 12px;
+      border-radius: 50%;
+      padding: 2px 6px;
     }
 
     #cart-popup {
@@ -127,43 +151,144 @@
   </style>
 </head>
 <body>
-  <h1>🍣 Меню Shoha</h1>
+  <h1>🍽 Меню Shoha</h1>
   <div class="menu-section">
 
     <div class="category">
-      <h2>Суши</h2>
+      <h2>🍣 Суши / Шаурма</h2>
       <div class="item">
-        <img src="https://i.ibb.co/p2xkqYX/sushi1.jpg" alt="Филадельфия">
+        <img src="https://i.ibb.co/p2xkqYX/sushi1.jpg" alt="">
         <div class="item-details">
           <div class="item-name">Филадельфия</div>
           <div class="price">45 000 UZS</div>
         </div>
-        <button onclick="addToCart('Филадельфия', 45000)">Добавить</button>
+        <div class="item-controls">
+          <button onclick="addToCart('Филадельфия', 45000, this)">Добавить</button>
+          <div class="counter">0</div>
+        </div>
       </div>
       <div class="item">
-        <img src="https://i.ibb.co/NZtxrGj/sushi2.jpg" alt="Калифорния">
+        <img src="https://i.ibb.co/NZtxrGj/sushi2.jpg" alt="">
         <div class="item-details">
           <div class="item-name">Калифорния</div>
           <div class="price">40 000 UZS</div>
         </div>
-        <button onclick="addToCart('Калифорния', 40000)">Добавить</button>
+        <div class="item-controls">
+          <button onclick="addToCart('Калифорния', 40000, this)">Добавить</button>
+          <div class="counter">0</div>
+        </div>
+      </div>
+      <div class="item">
+        <img src="https://i.ibb.co/YT6Yr5T/shaurma.jpg" alt="">
+        <div class="item-details">
+          <div class="item-name">Шаурма классическая</div>
+          <div class="price">30 000 UZS</div>
+        </div>
+        <div class="item-controls">
+          <button onclick="addToCart('Шаурма классическая', 30000, this)">Добавить</button>
+          <div class="counter">0</div>
+        </div>
       </div>
     </div>
 
     <div class="category">
-      <h2>Напитки</h2>
+      <h2>🍟 Закуски</h2>
       <div class="item">
-        <img src="https://i.ibb.co/8ccv4FP/pepsi.jpg" alt="Pepsi">
+        <img src="https://i.ibb.co/yYzMDMd/fries.jpg" alt="">
         <div class="item-details">
-          <div class="item-name">Pepsi 0.5л</div>
+          <div class="item-name">Картошка фри</div>
+          <div class="price">12 000 UZS</div>
+        </div>
+        <div class="item-controls">
+          <button onclick="addToCart('Картошка фри', 12000, this)">Добавить</button>
+          <div class="counter">0</div>
+        </div>
+      </div>
+      <div class="item">
+        <img src="https://i.ibb.co/BByFw9k/nuggets.jpg" alt="">
+        <div class="item-details">
+          <div class="item-name">Наггетсы</div>
+          <div class="price">18 000 UZS</div>
+        </div>
+        <div class="item-controls">
+          <button onclick="addToCart('Наггетсы', 18000, this)">Добавить</button>
+          <div class="counter">0</div>
+        </div>
+      </div>
+      <div class="item">
+        <img src="https://i.ibb.co/t2RBYtG/hotdog.jpg" alt="">
+        <div class="item-details">
+          <div class="item-name">Хот-дог XXL</div>
+          <div class="price">25 000 UZS</div>
+        </div>
+        <div class="item-controls">
+          <button onclick="addToCart('Хот-дог XXL', 25000, this)">Добавить</button>
+          <div class="counter">0</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="category">
+      <h2>🥤 Напитки</h2>
+      <div class="item">
+        <img src="https://i.ibb.co/8ccv4FP/pepsi.jpg" alt="">
+        <div class="item-details">
+          <div class="item-name">Pepsi</div>
           <div class="price">8 000 UZS</div>
         </div>
-        <button onclick="addToCart('Pepsi 0.5л', 8000)">Добавить</button>
+        <div class="item-controls">
+          <button onclick="addToCart('Pepsi', 8000, this)">Добавить</button>
+          <div class="counter">0</div>
+        </div>
+      </div>
+      <div class="item">
+        <img src="https://i.ibb.co/0XxTtZ6/cola.jpg" alt="">
+        <div class="item-details">
+          <div class="item-name">Coca-Cola</div>
+          <div class="price">8 000 UZS</div>
+        </div>
+        <div class="item-controls">
+          <button onclick="addToCart('Coca-Cola', 8000, this)">Добавить</button>
+          <div class="counter">0</div>
+        </div>
+      </div>
+      <div class="item">
+        <img src="https://i.ibb.co/JyxFNWf/ayran.jpg" alt="">
+        <div class="item-details">
+          <div class="item-name">Айран</div>
+          <div class="price">5 000 UZS</div>
+        </div>
+        <div class="item-controls">
+          <button onclick="addToCart('Айран', 5000, this)">Добавить</button>
+          <div class="counter">0</div>
+        </div>
+      </div>
+      <div class="item">
+        <img src="https://i.ibb.co/sPpXb3T/coffee.jpg" alt="">
+        <div class="item-details">
+          <div class="item-name">Кофе</div>
+          <div class="price">10 000 UZS</div>
+        </div>
+        <div class="item-controls">
+          <button onclick="addToCart('Кофе', 10000, this)">Добавить</button>
+          <div class="counter">0</div>
+        </div>
+      </div>
+      <div class="item">
+        <img src="https://i.ibb.co/FWg8gX6/juice.jpg" alt="">
+        <div class="item-details">
+          <div class="item-name">Апельсиновый сок</div>
+          <div class="price">9 000 UZS</div>
+        </div>
+        <div class="item-controls">
+          <button onclick="addToCart('Апельсиновый сок', 9000, this)">Добавить</button>
+          <div class="counter">0</div>
+        </div>
       </div>
     </div>
   </div>
 
-  <button id="cart-button" onclick="toggleCart()">🛒</button>
+  <button id="cart-button" onclick="toggleCart()">🛒<span id="cart-count">0</span></button>
 
   <div id="cart-popup">
     <h3>🛍 Ваша корзина</h3>
@@ -174,10 +299,18 @@
 
   <script>
     let cart = [];
+    let totalItems = 0;
 
-    function addToCart(name, price) {
+    function addToCart(name, price, button) {
       cart.push({ name, price });
+      totalItems++;
       updateCartUI();
+
+      const counterDiv = button.nextElementSibling;
+      const currentCount = parseInt(counterDiv.textContent) || 0;
+      counterDiv.textContent = currentCount + 1;
+
+      document.getElementById("cart-count").textContent = totalItems;
     }
 
     function toggleCart() {
@@ -203,6 +336,8 @@
 
     function removeItem(index) {
       cart.splice(index, 1);
+      totalItems--;
+      document.getElementById("cart-count").textContent = totalItems;
       updateCartUI();
     }
 
@@ -230,6 +365,8 @@
         if (data.ok) {
           alert("✅ Заказ отправлен!");
           cart = [];
+          totalItems = 0;
+          document.getElementById("cart-count").textContent = "0";
           updateCartUI();
           toggleCart();
         } else {
