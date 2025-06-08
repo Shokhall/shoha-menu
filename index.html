@@ -1,8 +1,8 @@
 <!DOCTYPE html>
 <html lang="ru">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Меню Shoha</title>
   <style>
     body {
@@ -49,17 +49,22 @@
     .price {
       color: #888;
     }
-    button {
-      padding: 8px 14px;
+    .controls {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .controls button {
+      padding: 6px 12px;
       background: #ff6347;
       color: white;
       border: none;
-      border-radius: 10px;
+      border-radius: 6px;
       cursor: pointer;
-      transition: background 0.3s ease;
     }
-    button:hover {
-      background: #e5533c;
+    .controls span {
+      min-width: 20px;
+      text-align: center;
     }
     #cart-button {
       position: fixed;
@@ -96,14 +101,13 @@
       padding: 20px;
       width: 300px;
       display: none;
-      transition: all 0.4s ease;
       max-height: 400px;
       overflow-y: auto;
     }
     #cart-popup h3 {
       margin-top: 0;
     }
-    #cart-items div {
+    .cart-item {
       margin-bottom: 10px;
     }
     .remove-btn {
@@ -113,29 +117,12 @@
       margin-left: 10px;
       padding: 2px 6px;
     }
-    .remove-btn:hover {
-      background: #999;
-    }
   </style>
 </head>
 <body>
   <h1>🍽 Меню Shoha</h1>
-  <div class="menu-section">
-    <div class="category">
-      <h2>🥙 Шаурма</h2>
-      <div class="item"><span class="item-name">Классическая шаурма</span><span class="price">30 000</span><button onclick="addToCart('Классическая шаурма', 30000)">Добавить</button></div>
-      <div class="item"><span class="item-name">Шаурма с сыром</span><span class="price">35 000</span><button onclick="addToCart('Шаурма с сыром', 35000)">Добавить</button></div>
-    </div>
-    <div class="category">
-      <h2>🌭 Хот-доги</h2>
-      <div class="item"><span class="item-name">Хот-дог стандарт</span><span class="price">20 000</span><button onclick="addToCart('Хот-дог стандарт', 20000)">Добавить</button></div>
-      <div class="item"><span class="item-name">Хот-дог XXL</span><span class="price">25 000</span><button onclick="addToCart('Хот-дог XXL', 25000)">Добавить</button></div>
-    </div>
-    <div class="category">
-      <h2>🥤 Напитки</h2>
-      <div class="item"><span class="item-name">Пепси 0.5л</span><span class="price">8 000</span><button onclick="addToCart('Пепси 0.5л', 8000)">Добавить</button></div>
-      <div class="item"><span class="item-name">Кола 1л</span><span class="price">12 000</span><button onclick="addToCart('Кола 1л', 12000)">Добавить</button></div>
-    </div>
+  <div class="menu-section" id="menu-section">
+    <!-- Пример блюда -->
   </div>
 
   <button id="cart-button" onclick="toggleCart()">🛒<span id="cart-count">0</span></button>
@@ -148,16 +135,51 @@
   </div>
 
   <script>
-    let cart = [];
+    const products = [
+      { name: "Классическая шаурма", price: 30000 },
+      { name: "Шаурма с сыром", price: 35000 },
+      { name: "Хот-дог стандарт", price: 20000 },
+      { name: "Хот-дог XXL", price: 25000 },
+      { name: "Пепси 0.5л", price: 8000 },
+      { name: "Кола 1л", price: 12000 },
+      { name: "Капучино", price: 10000 },
+      { name: "Эспрессо", price: 9000 },
+      { name: "Мороженое", price: 15000 },
+      { name: "Сок апельсиновый", price: 10000 }
+    ];
 
-    function addToCart(name, price) {
-      cart.push({ name, price });
+    const cart = {};
+
+    function renderMenu() {
+      const menu = document.getElementById('menu-section');
+      products.forEach((item, i) => {
+        const div = document.createElement('div');
+        div.className = 'item';
+        div.innerHTML = `
+          <span class="item-name">${item.name}</span>
+          <span class="price">${item.price.toLocaleString()}</span>
+          <div class="controls">
+            <button onclick="decrease('${i}')">−</button>
+            <span id="qty-${i}">0</span>
+            <button onclick="increase('${i}')">+</button>
+          </div>
+        `;
+        const cat = document.createElement('div');
+        cat.className = 'category';
+        cat.appendChild(div);
+        menu.appendChild(cat);
+      });
+    }
+
+    function increase(i) {
+      cart[i] = (cart[i] || 0) + 1;
       updateCartUI();
     }
 
-    function toggleCart() {
-      const popup = document.getElementById('cart-popup');
-      popup.style.display = popup.style.display === 'block' ? 'none' : 'block';
+    function decrease(i) {
+      if (cart[i]) cart[i]--;
+      if (cart[i] <= 0) delete cart[i];
+      updateCartUI();
     }
 
     function updateCartUI() {
@@ -166,79 +188,73 @@
       const cartCount = document.getElementById('cart-count');
       cartItems.innerHTML = '';
       let total = 0;
+      let count = 0;
 
-      cart.forEach((item, index) => {
-        const line = document.createElement('div');
-        line.innerHTML = `${item.name} — ${item.price.toLocaleString()} UZS <button class="remove-btn" onclick="removeItem(${index})">удалить</button>`;
-        cartItems.appendChild(line);
-        total += item.price;
+      Object.keys(cart).forEach(i => {
+        const product = products[i];
+        const quantity = cart[i];
+        const subtotal = quantity * product.price;
+        const div = document.createElement('div');
+        div.className = 'cart-item';
+        div.innerText = `${product.name} × ${quantity} = ${subtotal.toLocaleString()} UZS`;
+        cartItems.appendChild(div);
+        total += subtotal;
+        count += quantity;
+        document.getElementById(`qty-${i}`).innerText = quantity;
       });
 
       totalPrice.textContent = total.toLocaleString();
-      cartCount.textContent = cart.length;
+      cartCount.textContent = count;
     }
 
-    function removeItem(index) {
-      cart.splice(index, 1);
-      updateCartUI();
+    function toggleCart() {
+      const popup = document.getElementById('cart-popup');
+      popup.style.display = popup.style.display === 'block' ? 'none' : 'block';
     }
 
     function placeOrder() {
-      if (cart.length === 0) {
+      if (Object.keys(cart).length === 0) {
         alert("Корзина пуста!");
         return;
       }
 
-      const orderText = cart.map(item => `${item.name} (${item.price.toLocaleString()} UZS)`).join("\n");
-      const message = `🧾 Новый заказ (Shoha Menu):\n${orderText}\n💵 Сумма: ${cart.reduce((sum, item) => sum + item.price, 0).toLocaleString()} UZS`;
+      let message = "🧾 Новый заказ (Shoha Menu):\n";
+      let total = 0;
+
+      Object.keys(cart).forEach(i => {
+        const product = products[i];
+        const quantity = cart[i];
+        const subtotal = quantity * product.price;
+        message += `${product.name} × ${quantity} = ${subtotal.toLocaleString()} UZS\n`;
+        total += subtotal;
+      });
+
+      message += `\n💵 Общая сумма: ${total.toLocaleString()} UZS`;
 
       fetch("https://api.telegram.org/bot7745830810:AAHuwIeNelT9z5U88AORGGj-jdXEy_hcFhc/sendMessage", {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: {
+          "Content-Type": "application/json"
+        },
         body: JSON.stringify({
           chat_id: "-1002839289450",
           text: message
         })
       })
-      .then(res => res.json())
+      .then(response => response.json())
       .then(data => {
         if (data.ok) {
-          cart = [];
-          updateCartUI();
           window.location.href = "thankyou.html";
         } else {
-          alert("❌ Ошибка Telegram: " + data.description);
+          alert("Ошибка Telegram: " + data.description);
         }
       })
-      .catch(err => alert("❌ Ошибка подключения: " + err));
+      .catch(error => {
+        alert("Ошибка подключения: " + error);
+      });
     }
+
+    renderMenu();
   </script>
-</body>
-</html>
-<!DOCTYPE html>
-<html lang="ru">
-<head>
-  <meta charset="UTF-8">
-  <title>Спасибо за заказ!</title>
-  <style>
-    body {
-      font-family: sans-serif;
-      background: #f0fff0;
-      text-align: center;
-      padding: 50px;
-    }
-    h1 {
-      color: #2e8b57;
-      font-size: 28px;
-    }
-    p {
-      font-size: 18px;
-      margin-top: 20px;
-    }
-  </style>
-</head>
-<body>
-  <h1>🎉 Спасибо за заказ!</h1>
-  <p>Наши сотрудники уже занимаются обработкой.<br>Ожидайте, пожалуйста!</p>
 </body>
 </html>
